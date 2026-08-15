@@ -1,0 +1,9 @@
+name: iOS LLVM
+on:
+   workflow_dispatch:
+jobs:
+   build:
+      runs-on: macos-latest
+      steps:
+         - uses: actions/checkout@v6
+         - run: sh build.sh
