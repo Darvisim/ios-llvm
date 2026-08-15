@@ -12,9 +12,9 @@ tar -xf "${LLVM_ARCHIVE}"
 mv "llvm-project-${LLVM_VERSION}.src" "${LLVM_SRC}"
 rm "${LLVM_ARCHIVE}"
 
-HOST_DIR="${WORKSPACE_DIR}/build-host"
+HOST_BUILD="${WORKSPACE_DIR}/build-host"
 
-cmake -S "${LLVM_SRC}/llvm" -B "${HOST_DIR}"  -G Ninja \
+cmake -S "${LLVM_SRC}/llvm" -B "${HOST_BUILD}"  -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DLLVM_ENABLE_PROJECTS="clang" \
   -DLLVM_TARGETS_TO_BUILD="AArch64"
