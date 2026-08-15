@@ -6,4 +6,6 @@ jobs:
       runs-on: macos-latest
       steps:
          - uses: actions/checkout@v6
-         - run: sh build.sh
+         - run: |
+            chmod +x build.sh
+            ./build.sh
