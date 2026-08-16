@@ -12,6 +12,8 @@ tar -xf "${LLVM_ARCHIVE}"
 mv "llvm-project-${LLVM_VERSION}.src" "${LLVM_SRC}"
 rm "${LLVM_ARCHIVE}"
 
+grep -n -A10 -B3 'LLVM_NO_DEAD_STRIP' llvm-src/llvm/cmake/modules/AddLLVM.cmake
+
 ADDLLVM="${LLVM_SRC}/llvm/cmake/modules/AddLLVM.cmake"
 perl -0pi -e 's/if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/ or die "Could not patch AddLLVM.cmake\n"' "${ADDLLVM}"
 
