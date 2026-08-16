@@ -15,7 +15,9 @@ rm "${LLVM_ARCHIVE}"
 grep -n -A10 -B3 'LLVM_NO_DEAD_STRIP' llvm-src/llvm/cmake/modules/AddLLVM.cmake
 
 ADDLLVM="${LLVM_SRC}/llvm/cmake/modules/AddLLVM.cmake"
-perl -0pi -e 's/if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/ or die "Could not patch AddLLVM.cmake\n"' "${ADDLLVM}"
+perl -0pi -e 's/if\(NOT LLVM_NO_DEAD_STRIP\)\n\s+if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if(NOT LLVM_NO_DEAD_STRIP)\n      if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/' "${ADDLLVM}"
+
+grep -n -A5 -B2 'LLVM_NO_DEAD_STRIP' "${ADDLLVM}"
 
 HOST_BUILD="${WORKSPACE_DIR}/build-host"
 
