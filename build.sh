@@ -12,6 +12,9 @@ tar -xf "${LLVM_ARCHIVE}"
 mv "llvm-project-${LLVM_VERSION}.src" "${LLVM_SRC}"
 rm "${LLVM_ARCHIVE}"
 
+ADDLLVM="${LLVM_SRC}/llvm/cmake/modules/AddLLVM.cmake"
+perl -0pi -e 's/if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/ or die "Could not patch AddLLVM.cmake\n"' "${ADDLLVM}"
+
 HOST_BUILD="${WORKSPACE_DIR}/build-host"
 
 cmake -S "${LLVM_SRC}/llvm" -B "${HOST_BUILD}"  -G Ninja \
