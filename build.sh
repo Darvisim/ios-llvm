@@ -31,13 +31,13 @@ cmake -S "${LLVM_SRC}/llvm"  -B "${IOS_BUILD}"  -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_C_FLAGS="-target arm64-apple-ios15.0 -w" \
   -DCMAKE_CXX_FLAGS="-target arm64-apple-ios15.0 -w" \
-  -DCMAKE_MACOSX_BUNDLE=OFF \
   -DCMAKE_OSX_SYSROOT="$(xcrun --sdk iphoneos --show-sdk-path)" \
   -DCMAKE_OSX_ARCHITECTURES="arm64" \
   -DCMAKE_OSX_DEPLOYMENT_TARGET="15.0" \
   -DLLVM_ENABLE_PROJECTS="clang" \
   -DLLVM_TARGETS_TO_BUILD="AArch64" \
   -DLLVM_DEFAULT_TARGET_TRIPLE="arm64-apple-ios15.0" \
-  -DLLVM_NATIVE_TOOL_DIR="${HOST_BUILD}/bin"
+  -DLLVM_NATIVE_TOOL_DIR="${HOST_BUILD}/bin" \
+  -DLLVM_ENABLE_ZSTD=OFF
 
 cmake --build "${IOS_BUILD}" --parallel "$(sysctl -n hw.ncpu)"
