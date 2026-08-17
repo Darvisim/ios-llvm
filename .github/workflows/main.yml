@@ -18,5 +18,5 @@ jobs:
 
       - name: Build
         run: |
-          chmod +x build-cross-cmake.sh
-          ./build-cross-cmake.sh "${{ matrix.target }}" "${{ matrix.llvm_type }}" "${{ matrix.build_type }}"
+          chmod +x build.sh
+          ./build.sh "${{ matrix.target }}" "${{ matrix.llvm_type }}" "${{ matrix.build_type }}"
