@@ -1,6 +1,53 @@
 #!/bin/bash
 set -e
 
+TARGET="${1:-}"
+BUILD_TYPE="${2:-Release}"
+
+if [[ -z "${TARGET}" ]]; then
+    echo "Usage: $0 <target> [build-type]"
+    echo "Targets:"
+    echo "  ios-arm64"
+    echo "  ios-simulator-arm64"
+    echo "  ios-simulator-x86_64"
+    exit 1
+fi
+
+case "${BUILD_TYPE}" in
+    Release|Debug)
+        ;;
+    *)
+        echo "Unknown build type: ${BUILD_TYPE}"
+        echo "Build types: Release, Debug"
+        exit 1
+        ;;
+esac
+
+case "${TARGET}" in
+    ios-arm64)
+        SDK="iphoneos"
+        ARCH="arm64"
+        TRIPLE="arm64-apple-ios15.0"
+        ;;
+
+    ios-simulator-arm64)
+        SDK="iphonesimulator"
+        ARCH="arm64"
+        TRIPLE="arm64-apple-ios15.0-simulator"
+        ;;
+
+    ios-simulator-x86_64)
+        SDK="iphonesimulator"
+        ARCH="x86_64"
+        TRIPLE="x86_64-apple-ios15.0-simulator"
+        ;;
+
+    *)
+        echo "Unknown target: ${TARGET}"
+        exit 1
+        ;;
+esac
+
 LLVM_VERSION="22.1.8"
 WORKSPACE_DIR=$(pwd)
 LLVM_ARCHIVE="llvm-project-${LLVM_VERSION}.src.tar.xz"
@@ -27,48 +74,27 @@ cmake -S "${LLVM_SRC}/llvm" -B "${HOST_BUILD}"  -G Ninja \
   -Wno-deprecated \
   -DCMAKE_BUILD_TYPE=Release \
   -DLLVM_ENABLE_PROJECTS="clang" \
-  -DLLVM_TARGETS_TO_BUILD="AArch64"
+  -DLLVM_TARGETS_TO_BUILD="AArch64;X86"
 
 cmake --build "${HOST_BUILD}" --target llvm-tblgen clang-tblgen --parallel "$(sysctl -n hw.ncpu)"
 
-echo "Building iOS ARM64 target"
-IOS_BUILD="${WORKSPACE_DIR}/build-ios"
+echo "Building ${TARGET}"
+BUILD_DIR="${WORKSPACE_DIR}/build-${TARGET}-${BUILD_TYPE,,}"
 
-cmake -S "${LLVM_SRC}/llvm" -B "${IOS_BUILD}" -G Ninja \
+cmake -S "${LLVM_SRC}/llvm" -B "${BUILD_DIR}" -G Ninja \
   -Wno-author \
   -Wno-deprecated \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
   -DCMAKE_SYSTEM_NAME=iOS \
   -DCMAKE_C_FLAGS="-w" \
   -DCMAKE_CXX_FLAGS="-w" \
   -DCMAKE_MACOSX_BUNDLE=OFF \
-  -DCMAKE_OSX_SYSROOT="$(xcrun --sdk iphoneos --show-sdk-path)" \
-  -DCMAKE_OSX_ARCHITECTURES="arm64" \
+  -DCMAKE_OSX_SYSROOT="$(xcrun --sdk "${SDK}" --show-sdk-path)" \
+  -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
   -DCMAKE_OSX_DEPLOYMENT_TARGET="15.0" \
   -DLLVM_ENABLE_PROJECTS="clang" \
-  -DLLVM_TARGETS_TO_BUILD="AArch64" \
-  -DLLVM_DEFAULT_TARGET_TRIPLE="arm64-apple-ios15.0" \
+  -DLLVM_TARGETS_TO_BUILD="AArch64;X86" \
+  -DLLVM_DEFAULT_TARGET_TRIPLE="${TRIPLE}" \
   -DLLVM_NATIVE_TOOL_DIR="${HOST_BUILD}/bin"
 
-cmake --build "${IOS_BUILD}" --parallel "$(sysctl -n hw.ncpu)"
-
-echo "Building iOS ARM64 simulator target"
-IOS_SIMULATOR_BUILD="${WORKSPACE_DIR}/build-ios-simulator"
-
-cmake -S "${LLVM_SRC}/llvm" -B "${IOS_SIMULATOR_BUILD}" -G Ninja \
-  -Wno-author \
-  -Wno-deprecated \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_SYSTEM_NAME=iOS \
-  -DCMAKE_C_FLAGS="-w" \
-  -DCMAKE_CXX_FLAGS="-w" \
-  -DCMAKE_MACOSX_BUNDLE=OFF \
-  -DCMAKE_OSX_SYSROOT="$(xcrun --sdk iphonesimulator --show-sdk-path)" \
-  -DCMAKE_OSX_ARCHITECTURES="arm64" \
-  -DCMAKE_OSX_DEPLOYMENT_TARGET="15.0" \
-  -DLLVM_ENABLE_PROJECTS="clang" \
-  -DLLVM_TARGETS_TO_BUILD="AArch64" \
-  -DLLVM_DEFAULT_TARGET_TRIPLE="arm64-apple-ios15.0-simulator" \
-  -DLLVM_NATIVE_TOOL_DIR="${HOST_BUILD}/bin"
-  
-cmake --build "${IOS_SIMULATOR_BUILD}" --parallel "$(sysctl -n hw.ncpu)"
+cmake --build "${BUILD_DIR}" --parallel "$(sysctl -n hw.ncpu)"
