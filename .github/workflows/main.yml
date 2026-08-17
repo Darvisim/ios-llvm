@@ -25,5 +25,5 @@ jobs:
 
       - name: Build
         run: |
-          chmod +x build.sh
-          ./build.sh "${{ matrix.target }}" "${{ matrix.type }}"
+          chmod +x build-native.sh
+          ./build-native.sh "${{ matrix.target }}" "${{ matrix.type }}"
