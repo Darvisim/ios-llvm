@@ -75,7 +75,7 @@ cmake -S "${LLVM_SRC}/llvm" -B "${BUILD_DIR}" -G Ninja \
   -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
   -DCMAKE_C_FLAGS="-w" \
   -DCMAKE_CXX_FLAGS="-w" \
-  -DCMAKE_TOOLCHAIN_FILE="${LLVM_SRC}/cmake/platforms/iOS.cmake" \
+  -DCMAKE_TOOLCHAIN_FILE="${LLVM_SRC}/llvm/cmake/platforms/iOS.cmake" \
   -DCMAKE_MACOSX_BUNDLE=OFF \
   -DCMAKE_OSX_SYSROOT="$(xcrun --sdk "${SDK}" --show-sdk-path)" \
   -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
