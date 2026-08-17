@@ -2,11 +2,11 @@
 set -e
 
 TARGET="${1:-}"
-BUILD_TYPE="${2:-Release}"
-LLVM_TYPE="${3:-Native}"
+LLVM_TYPE="${2:-Native}"
+BUILD_TYPE="${3:-Release}"
 
 if [[ -z "${TARGET}" ]]; then
-    echo "Usage: $0 <target> [build-type] [llvm-type]"
+    echo "Usage: $0 <target> [llvm-type] [build-type]"
     echo
     echo "Targets:"
     echo "  ios-arm64"
@@ -100,7 +100,7 @@ echo "Triple:     ${TRIPLE}"
 echo "========================================"
 echo
 
-BUILD_DIR="${WORKSPACE_DIR}/build-${TARGET}-$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')-$(echo "${LLVM_TYPE}" | tr '[:upper:]' '[:lower:]')"
+BUILD_DIR="${WORKSPACE_DIR}/build-${TARGET}-$(echo "${LLVM_TYPE}" | tr '[:upper:]' '[:lower:]')-$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')"
 
 echo "Building LLVM for ${TARGET} with CMake"
 cmake -S "${LLVM_SRC}/llvm" -B "${BUILD_DIR}" -G Ninja \
