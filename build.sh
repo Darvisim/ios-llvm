@@ -14,8 +14,10 @@ rm "${LLVM_ARCHIVE}"
 
 ADDLLVM="${LLVM_SRC}/llvm/cmake/modules/AddLLVM.cmake"
 perl -0pi -e 's/if\(NOT LLVM_NO_DEAD_STRIP\)\n\s+if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if(NOT LLVM_NO_DEAD_STRIP)\n      if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/' "${ADDLLVM}"
+HANDLELLVMOPTIONS="${LLVM_SRC}/llvm/cmake/modules/HandleLLVMOptions.cmake"
+perl -0pi -e 's/CMAKE_SYSTEM_NAME MATCHES "Darwin\|FreeBSD/CMAKE_SYSTEM_NAME MATCHES "Darwin|iOS|FreeBSD/' "${HANDLELLVMOPTIONS}"
 
-grep -n -A5 -B3 'z,defs' "${LLVM_SRC}/llvm/cmake/modules/HandleLLVMOptions.cmake"
+grep -n -A4 -B1 'z,defs' "${HANDLELLVMOPTIONS}"
 
 HOST_BUILD="${WORKSPACE_DIR}/build-host"
 
