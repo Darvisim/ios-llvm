@@ -12,12 +12,10 @@ tar -xf "${LLVM_ARCHIVE}"
 mv "llvm-project-${LLVM_VERSION}.src" "${LLVM_SRC}"
 rm "${LLVM_ARCHIVE}"
 
-grep -n -A10 -B3 'LLVM_NO_DEAD_STRIP' llvm-src/llvm/cmake/modules/AddLLVM.cmake
-
 ADDLLVM="${LLVM_SRC}/llvm/cmake/modules/AddLLVM.cmake"
 perl -0pi -e 's/if\(NOT LLVM_NO_DEAD_STRIP\)\n\s+if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if(NOT LLVM_NO_DEAD_STRIP)\n      if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/' "${ADDLLVM}"
 
-grep -n -A5 -B2 'LLVM_NO_DEAD_STRIP' "${ADDLLVM}"
+grep -n -A5 -B3 'z,defs' "${LLVM_SRC}/llvm/cmake/modules/HandleLLVMOptions.cmake"
 
 HOST_BUILD="${WORKSPACE_DIR}/build-host"
 
