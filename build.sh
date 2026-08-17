@@ -79,7 +79,7 @@ cmake -S "${LLVM_SRC}/llvm" -B "${HOST_BUILD}"  -G Ninja \
 cmake --build "${HOST_BUILD}" --target llvm-tblgen clang-tblgen --parallel "$(sysctl -n hw.ncpu)"
 
 echo "Building ${TARGET}"
-BUILD_DIR="${WORKSPACE_DIR}/build-${TARGET}-${BUILD_TYPE,,}"
+BUILD_DIR="${WORKSPACE_DIR}/build-${TARGET}-$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')"
 
 cmake -S "${LLVM_SRC}/llvm" -B "${BUILD_DIR}" -G Ninja \
   -Wno-author \
