@@ -5,20 +5,13 @@ on:
 
 jobs:
   build:
-    name: Build (${{ matrix.target }}, ${{ matrix.type }})
-
+    name: Build (${{ matrix.target }}, ${{ matrix.llvm_type }}, ${{ matrix.build_type }})
     strategy:
       matrix:
-        type:
-          - Release
-          - Debug
-        target:
-          - ios-arm64
-          - ios-simulator-arm64
-          - ios-simulator-x86_64
-
+        build_type: [ Release, Debug ]
+        llvm_type: [ Native, Cross-Host, Cross-CMake ]
+        target: [ ios-arm64, ios-simulator-arm64, ios-simulator-x86_64 ]
     runs-on: macos-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -26,4 +19,4 @@ jobs:
       - name: Build
         run: |
           chmod +x build-cross-cmake.sh
-          ./build-cross-cmake.sh "${{ matrix.target }}" "${{ matrix.type }}"
+          ./build-cross-cmake.sh "${{ matrix.target }}" "${{ matrix.llvm_type }}" "${{ matrix.build_type }}"
