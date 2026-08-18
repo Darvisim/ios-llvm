@@ -5,11 +5,11 @@ on:
 
 jobs:
   build:
-    name: Build (${{ matrix.target }}, ${{ matrix.llvm_type }}, ${{ matrix.build_type }})
+    name: Build (${{ matrix.target }}, ${{ matrix.mode_type }}, ${{ matrix.build_type }})
     strategy:
       matrix:
         build_type: [ Release, Debug ]
-        llvm_type: [ Native, Cross-Host, Cross-CMake ]
+        mode_type: [ Native, Cross-Host, Cross-CMake ]
         target: [ ios-arm64, ios-simulator-arm64, ios-simulator-x86_64 ]
     runs-on: macos-latest
     steps:
@@ -19,4 +19,4 @@ jobs:
       - name: Build
         run: |
           chmod +x build.sh
-          ./build.sh "${{ matrix.target }}" "${{ matrix.llvm_type }}" "${{ matrix.build_type }}"
+          ./build.sh "${{ matrix.target }}" "${{ matrix.mode_type }}" "${{ matrix.build_type }}"
