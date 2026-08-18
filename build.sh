@@ -7,7 +7,12 @@ TARGET="${1:-}"
 MODE_TYPE="${2:-Native}"
 BUILD_TYPE="${3:-Release}"
 
-# Eg: build.sh ios-arm64 Native Release
+# Specify which target to be built
+# Eg: If you want to build ios-arm64 target of type Release via Native mode, do:
+# chmod +x build.sh
+# ./bash.sh ios-arm64 Native Release
+# or if you prefer the bash way then, do:
+# bash build.sh ios-arm64 Native Release
 if [[ -z "${TARGET}" ]]; then
     echo "Usage: $0 <target> [mode-type] [build-type]"
     echo
@@ -42,6 +47,8 @@ case "${MODE_TYPE}" in
         ;;
 esac
 
+# Modern targets that we build are only these 3 targets: ios-arm64, ios-simulator-arm64 and ios-simulator-x86_64
+# Support for legacy builds can be added only if needed
 case "${TARGET}" in
     ios-arm64)
         SDK="iphoneos"
@@ -68,10 +75,9 @@ ZSTD_VERSION="1.5.7"
 ZSTD_SRC="${WORKSPACE_DIR}/zstd-src"
 ZSTD_BUILD="${WORKSPACE_DIR}/zstd-${TARGET}-$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')"
 
-# for Cross-CMake generate a native iOS static zstd library
-# this is to avoid mismatch of host zstd being used for iOS target
+# For Cross-CMake generate a native iOS static zstd lib to avoid mismatch of host zstd being used for iOS target
 if [[ "${MODE_TYPE}" == "Cross-CMake" ]]; then
-    echo "Building libzstd_static for iOS"
+    echo -e "\033[1mBuilding zstd static library for iOS\033[0m"
     curl -L  "https://github.com/facebook/zstd/releases/download/v${ZSTD_VERSION}/zstd-${ZSTD_VERSION}.tar.gz" -o "zstd-${ZSTD_VERSION}.tar.gz"
     
     tar -xf "zstd-${ZSTD_VERSION}.tar.gz"
@@ -96,14 +102,14 @@ LLVM_VERSION="22.1.8"
 LLVM_ARCHIVE="llvm-project-${LLVM_VERSION}.src.tar.xz"
 LLVM_SRC="${WORKSPACE_DIR}/llvm-src"
 
-echo "Fetching and extracting LLVM ${LLVM_VERSION}"
+echo -e "\033[1mFetching and extracting LLVM ${LLVM_VERSION}\033[0m"
 curl -L "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/${LLVM_ARCHIVE}" -o "${LLVM_ARCHIVE}"
 
 tar -xf "${LLVM_ARCHIVE}"
 mv "llvm-project-${LLVM_VERSION}.src" "${LLVM_SRC}"
 rm "${LLVM_ARCHIVE}"
 
-echo "Applying LLVM CMake patches for iOS"
+echo -e "\033[1mApplying LLVM CMake patches for iOS\033[0m"
 perl -0pi -e 's/if\(NOT LLVM_NO_DEAD_STRIP\)\n\s+if\("\$\{CMAKE_SYSTEM_NAME\}" MATCHES "Darwin"\)/if(NOT LLVM_NO_DEAD_STRIP)\n      if("\${CMAKE_SYSTEM_NAME}" MATCHES "Darwin|iOS")/' "${LLVM_SRC}/llvm/cmake/modules/AddLLVM.cmake"
 perl -0pi -e 's/CMAKE_SYSTEM_NAME MATCHES "Darwin\|FreeBSD/CMAKE_SYSTEM_NAME MATCHES "Darwin|iOS|FreeBSD/' "${LLVM_SRC}/llvm/cmake/modules/HandleLLVMOptions.cmake"
 
@@ -111,7 +117,7 @@ HOST_BUILD="${WORKSPACE_DIR}/build-host-$(echo "${BUILD_TYPE}" | tr '[:upper:]' 
 
 # Only Cross-Host mode needs to build host tablegen utilities
 if [[ "${MODE_TYPE}" == "Cross-Host" ]]; then
-    echo "Building host TableGen utilities"
+    echo -e "\033[1mBuilding host TableGen utilities\033[0m"
     cmake -S "${LLVM_SRC}/llvm" -B "${HOST_BUILD}" -G Ninja \
         -Wno-author \
         -Wno-deprecated \
@@ -148,7 +154,7 @@ echo
 
 BUILD_DIR="${WORKSPACE_DIR}/build-${TARGET}-$(echo "${MODE_TYPE}" | tr '[:upper:]' '[:lower:]')-$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')"
 
-echo "Building LLVM for ${TARGET} of type ${BUILD_TYPE} with CMake via ${MODE_TYPE} mode"
+echo -e "\033[1mBuilding LLVM for ${TARGET} of type ${BUILD_TYPE} with CMake via ${MODE_TYPE} mode\033[0m"
 cmake -S "${LLVM_SRC}/llvm" -B "${BUILD_DIR}" -G Ninja \
   -Wno-author \
   -Wno-deprecated \
