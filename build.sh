@@ -66,7 +66,7 @@ esac
 
 ZSTD_VERSION="1.5.7"
 ZSTD_SRC="${WORKSPACE_DIR}/zstd-src"
-ZSTD_BUILD="${WORKSPACE_DIR}/zstd-${TARGET}"
+ZSTD_BUILD="${WORKSPACE_DIR}/zstd-${TARGET}-$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')"
 
 # for Cross-CMake generate a native iOS static zstd library
 # this is to avoid mismatch of host zstd being used for iOS target
@@ -79,7 +79,7 @@ if [[ "${MODE_TYPE}" == "Cross-CMake" ]]; then
     rm "zstd-${ZSTD_VERSION}.tar.gz"
     
     cmake -S "${ZSTD_SRC}/build/cmake" -B "${ZSTD_BUILD}" -G Ninja \
-      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
       -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_OSX_SYSROOT="$(xcrun --sdk "${SDK}" --show-sdk-path)" \
       -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
