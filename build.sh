@@ -63,7 +63,7 @@ case "${TARGET}" in
 esac
 
 ZSTD_VERSION="1.5.7"
-ZSTD_SRC="${WORKSPACE_DIR}/zstd-src"
+ZSTD_SRC="${WORKSPACE_DIR}/zstd"
 ZSTD_BUILD="${WORKSPACE_DIR}/zstd-${TARGET}"
 
 # for Cross-CMake generate a native iOS static zstd library
