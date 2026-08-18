@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+WORKSPACE_DIR="$(pwd)"
+
 TARGET="${1:-}"
 MODE_TYPE="${2:-Native}"
 BUILD_TYPE="${3:-Release}"
@@ -63,7 +65,7 @@ case "${TARGET}" in
 esac
 
 ZSTD_VERSION="1.5.7"
-ZSTD_SRC="${WORKSPACE_DIR}/zstd"
+ZSTD_SRC="${WORKSPACE_DIR}/zstd-src"
 ZSTD_BUILD="${WORKSPACE_DIR}/zstd-${TARGET}"
 
 # for Cross-CMake generate a native iOS static zstd library
@@ -91,7 +93,6 @@ if [[ "${MODE_TYPE}" == "Cross-CMake" ]]; then
 fi
 
 LLVM_VERSION="22.1.8"
-WORKSPACE_DIR="$(pwd)"
 LLVM_ARCHIVE="llvm-project-${LLVM_VERSION}.src.tar.xz"
 LLVM_SRC="${WORKSPACE_DIR}/llvm-src"
 
