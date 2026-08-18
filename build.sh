@@ -78,7 +78,7 @@ if [[ "${MODE_TYPE}" == "Cross-CMake" ]]; then
     mv "zstd-${ZSTD_VERSION}" "${ZSTD_SRC}"
     rm "zstd-${ZSTD_VERSION}.tar.gz"
     
-    cmake -S "${ZSTD_SRC}" -B "${ZSTD_BUILD}" -G Ninja \
+    cmake -S "${ZSTD_SRC}/build/cmake" -B "${ZSTD_BUILD}" -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_OSX_SYSROOT="$(xcrun --sdk "${SDK}" --show-sdk-path)" \
